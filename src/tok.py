@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Any
 
 class TokenType(Enum):
     VAR = "var"
@@ -37,13 +36,13 @@ class TokenType(Enum):
     EQUAL = "=="
     NOT_EQUAL = "!="
 
-class Token():
-    def __init__(self, type : TokenType, value : Any):
+class Token:
+    def __init__(self, type : TokenType, value = None) -> None:
         self.type = type
         self.value = value
 
-    def __repr__(self):
+    def __str__(self) -> str:
         return f"{self.type.name}({self.value})"
     
-    def __eq__(self, other : Token):
+    def __eq__(self, other : Token) -> bool:
         return self.type == other.type and self.value == other.value

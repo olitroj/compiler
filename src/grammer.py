@@ -1,11 +1,13 @@
 from enum import Enum
-from tok import TokenType
+
+class TerminalType(Enum):
+    pass
 
 class NonTerminalType(Enum):
     pass
 
 class GrammerRule:
-    def __init__(self, symbol : NonTerminalType, result : list[NonTerminalType | TokenType] | None) -> None:
+    def __init__(self, symbol : NonTerminalType, result : list[NonTerminalType | TerminalType] | None) -> None:
         self.symbol = symbol
         self.result = result
 

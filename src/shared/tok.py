@@ -2,7 +2,7 @@ from shared.grammer import TerminalType, Terminal
 
 '''
     Enum class representing all tokens within the language, and their lexeme.
-    Are a terminal symbol type.
+    Is a terminal symbol type.
 '''
 class TokenType(TerminalType):
     VAR = "var"
@@ -41,16 +41,8 @@ class TokenType(TerminalType):
     NOT_EQUAL = "!="
 
 '''
-    Class representing a single token. Contains a type, and an optional value.
-    Are a terminal symbol.
+    Class representing a single token.
+    Is a terminal symbol.
 '''
 class Token(Terminal):
-    def __init__(self, type : TokenType, value = None) -> None:
-        self.type = type
-        self.value = value
-
-    def __str__(self) -> str:
-        return  f"{self.type.name}" if self.value == None else f"{self.type.name}({self.value})"
-    
-    def __eq__(self, other : Token) -> bool:
-        return self.type == other.type and self.value == other.value
+    pass

@@ -1,6 +1,10 @@
-from enum import Enum
+from shared.grammer import TerminalType
 
-class TokenType(Enum):
+'''
+    Enum class representing all tokens within the language, and their lexeme.
+    Are terminal symbols.
+'''
+class TokenType(TerminalType):
     VAR = "var"
     ID = None
     ASSIGN = "="
@@ -36,6 +40,9 @@ class TokenType(Enum):
     EQUAL = "=="
     NOT_EQUAL = "!="
 
+'''
+    Class representing a single token. Contains a type, and an optional value.
+'''
 class Token:
     def __init__(self, type : TokenType, value = None) -> None:
         self.type = type

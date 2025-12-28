@@ -6,30 +6,33 @@ from enum import Enum
 '''
 class SymbolType(Enum):
     pass
+
 class TerminalType(SymbolType):
     pass
+
 class NonTerminalType(SymbolType):
     pass
+
 
 '''
     Classes that represent terminal or non-terminal symbols. Contain a [type], and an optional [value]
     Abstract class, inherit this class to define symbols in a grammer.
 '''
 class Symbol:
-    def __init__(self, type : SymbolType, value = None) -> None:
-        self.type = type
-        self.value = value
-
     def __str__(self) -> str:
         return  f"{self.type.name}" if self.value == None else f"{self.type.name}({self.value})"
-    
     def __eq__(self, other : Symbol) -> bool:
         return self.type == other.type and self.value == other.value
     
 class Terminal(Symbol):
-    pass
+    def __init__(self, type : TerminalType, value = None) -> None:
+        self.type = type
+        self.value = value
+
 class NonTerminal(Symbol):
-    pass
+    def __init__(self, type : NonTerminalType, value = None) -> None:
+        self.type = type
+        self.value = value
 
 '''
     Class representing a production rule for a reguler or context-free grammer.

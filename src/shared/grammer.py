@@ -2,12 +2,20 @@ from enum import Enum
 
 '''
     Enum classes that represent a terminal or non-terminal symbol type.
-    Abstract class, inherit this class to add symbols to a grammer.
+    Abstract class, inherit this class to define symbol types in a grammer.
 '''
 class TerminalType(Enum):
     pass
-
 class NonTerminalType(Enum):
+    pass
+
+'''
+    Classes that represent terminal or non-terminal symbols.
+    Abstract class, inherit this class to define symbols in a grammer.
+'''
+class Terminal:
+    pass
+class NonTerminal:
     pass
 
 '''

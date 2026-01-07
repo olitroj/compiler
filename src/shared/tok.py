@@ -1,12 +1,12 @@
-from shared.grammer import TerminalType, Terminal
+from shared.grammer import SymbolType, Symbol
 
 '''
-    Enum class representing all tokens within the language, and their lexeme.
-    Is a terminal symbol type.
+    Enum class representing all tokens within the language.
+    The [value] is the token's lexeme (or an integer if it doesn't have one), and the [is_terminal] flag is always True
 '''
-class TokenType(TerminalType):
+class TokenType(SymbolType):
     VAR = "var"
-    ID = None
+    ID = 0
     ASSIGN = "="
     SEMICOLON = ";"
     IF = "if"
@@ -18,7 +18,7 @@ class TokenType(TerminalType):
     COMMA = ","
     OPEN_CURLY = "{"
     CLOSE_CURLY = "}"
-    LITERAL = None
+    LITERAL = 1
     PLUS = "+"
     MINUS = "-"
     INCREMENT = "++"
@@ -40,9 +40,9 @@ class TokenType(TerminalType):
     EQUAL = "=="
     NOT_EQUAL = "!="
 
-'''
-    Class representing a single token.
-    Is a terminal symbol.
-'''
-class Token(Terminal):
-    pass
+    def __init__(self, value):
+        super().__init__(value, True)
+
+class Token(Symbol):
+    def __init__(self, type: TokenType, value = None):
+        super().__init__(type, value)

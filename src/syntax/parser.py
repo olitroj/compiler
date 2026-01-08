@@ -6,7 +6,7 @@ from syntax.astree import AST
     All non-terminal symbols types in the grammer.
 '''
 class N(SymbolType):
-    FILE = 1
+    FILE = 0
     STATEMENT = 2
     EXPRESSION = 3
     ELSE_CLAUSE = 5
@@ -14,12 +14,18 @@ class N(SymbolType):
     NEXT_STATEMENT = 6
     NEXT_EXPRESSION = 7
 
+    NEXT_DIFF = 9
+    SUM = 10
+    NEXT_SUM = 11
+    OR = 12
+    NEXT_OR = 13
+
     def __init__(self, val):
         super().__init__(val, False)
 
 '''
     All grammer rules in the language.
-    It is a LL(2) grammer, so no left-recursion, and peeking one place forward in any rule is enough to know if that rule applies.
+    It is a LL(2) grammer, so no left-recursion, and all production rules must have the first two produced symbols be unambiguous
 '''
 grammer = [
     # File
@@ -27,29 +33,32 @@ grammer = [
 
     # Statements
     GR(N.STATEMENT, [T.VAR, T.ID, T.ASSIGN, N.EXPRESSION, T.SEMICOLON]),            # Declaration + Assignment
-
     GR(N.STATEMENT, [T.ID, T.ASSIGN, N.EXPRESSION, T.SEMICOLON]),                   # Assignment
-
     GR(N.STATEMENT, [T.IF, N.EXPRESSION, N.STATEMENT, N.ELSE_CLAUSE]),              # Flow
     GR(N.ELSE_CLAUSE, [T.ELSE, N.STATEMENT]),
     GR(N.ELSE_CLAUSE, None),
-
     GR(N.STATEMENT, [T.WHILE, N.EXPRESSION, N.STATEMENT]),                          # Loop
     GR(N.STATEMENT, [T.DO, N.STATEMENT, T.WHILE, N.EXPRESSION, T.SEMICOLON]),
-
     GR(N.STATEMENT, [T.ID, T.OPEN_BRACE, N.EXPRESSION, N.NEXT_EXPRESSION]),         # Call
     GR(N.NEXT_EXPRESSION, [T.COMMA, N.EXPRESSION, N.NEXT_EXPRESSION]),
     GR(N.NEXT_EXPRESSION, None),
-
     GR(N.STATEMENT, [T.OPEN_CURLY, N.STATEMENT, N.NEXT_STATEMENT, T.CLOSE_CURLY]),  # Group
     GR(N.NEXT_STATEMENT, [N.STATEMENT, N.NEXT_STATEMENT]),
     GR(N.NEXT_STATEMENT, None),
     
     # Expressions
-    # TODO : Operator rules, with precedence
-    GR(N.EXPRESSION, [T.LITERAL]),
-    GR(N.EXPRESSION, [T.ID]),
-    GR(N.EXPRESSION, [T.OPEN_BRACE, N.EXPRESSION, T.CLOSE_BRACE])
+    # TODO : Add all operators with correct precedence levels
+    GR(N.EXPRESSION, [N.OR, N.NEXT_DIFF]),
+    GR(N.OR, [N.SUM, N.NEXT_OR]),
+    GR(N.SUM, [T.ID, N.NEXT_SUM]),
+    GR(N.SUM, [T.LITERAL, N.NEXT_SUM]),
+
+    GR(N.NEXT_DIFF, [T.MINUS, N.EXPRESSION]),
+    GR(N.NEXT_DIFF, None),
+    GR(N.NEXT_OR, [T.LOGIC_OR, N.OR]),
+    GR(N.NEXT_OR, None),
+    GR(N.NEXT_SUM, [T.PLUS, N.SUM]),
+    GR(N.NEXT_SUM, None)
 ]
 
 
@@ -57,9 +66,9 @@ grammer = [
     An LL(2) parsing function for analysing the syntactic structure of a sequence of tokens.
 
     Top down, so left-recursive rules don't work.
-    Doesn't use recursive descent, peeking one space forward is enough to determine if the rule fits (hence LL(2)).
+    Decides which rule fits by peeking two tokens ahead (since its LL(2))
 
-    Returns a complete abstract syntax tree representing the syntax,
+    Returns a complete parse tree representing the syntax,
     or None if the sequence of tokens doesn't follow the grammer.
 '''
 def parse(tokens : list[Token]) -> AST | None:
@@ -70,7 +79,7 @@ def parse(tokens : list[Token]) -> AST | None:
         print(tree)
 
 '''
-    Recursive function for building an AST from a sequence of tokens.
+    Recursive function for building a parse tree from a sequence of tokens.
     Returns None if non successful.
 '''
 def _build_tree(tree : AST, tokens : list[Token], t_idx : int):
@@ -82,7 +91,6 @@ def _build_tree(tree : AST, tokens : list[Token], t_idx : int):
         result = rule.result
 
         # If it reaches an epsilon rule, return t_idx without incrementing
-        # TODO : Make EPLISON added to tree
         if result == None:
             return t_idx
         
@@ -91,7 +99,7 @@ def _build_tree(tree : AST, tokens : list[Token], t_idx : int):
             continue
         if result[0] in T and result[0] != tokens[t_idx].type:
             continue
-        # If it is a non-terminal, but there are no tokens left, try the next one (potentially epsilon)
+        # If it is a non-terminal, but there are no tokens left, try the next rule (potentially epsilon)
         if result[0] in N and t_idx == len(tokens):
             continue
 
@@ -102,11 +110,20 @@ def _build_tree(tree : AST, tokens : list[Token], t_idx : int):
                 tree.nodes.append(AST(tokens[t_idx]))
                 t_idx += 1
 
-            # Add non-terminal symbol to tree, then recursivly expand it into non-terminals
+            # Add non-terminal symbol to tree, then recursivly expand it
             # If it fails to expand, return None
             elif rule_sym_type in N:
-                tree.nodes.append(AST(Symbol(rule_sym_type)))
-                t_idx = _build_tree(tree.nodes[-1], tokens, t_idx)
+                nterm_node = AST(Symbol(rule_sym_type))
+                t_idx = _build_tree(nterm_node, tokens, t_idx)
+
+                # TODO: Decide if this is a good idea
+                # Removes non-terminal from tree if it has just one terminal child, replaces it with that child
+                if len(nterm_node.nodes) == 1 and nterm_node.nodes[0].symbol.type in T:
+                    tree.nodes.append(nterm_node.nodes[0])
+                # Removes non-terminal from tree if it have and epsilon child
+                elif len(nterm_node.nodes) != 0:
+                    tree.nodes.append(nterm_node)
+
                 if t_idx == None:
                     return None
                 

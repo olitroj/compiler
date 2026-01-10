@@ -39,6 +39,7 @@ class TokenType(SymbolType):
     GREATER_THAN_EQUALS = ">="
     EQUAL = "=="
     NOT_EQUAL = "!="
+    EOF = 2
 
     def __init__(self, value):
         super().__init__(value, True)

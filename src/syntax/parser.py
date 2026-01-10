@@ -1,5 +1,5 @@
 from syntax.grammer import N, grammer
-from syntax.astree import AST
+from syntax.tree import Tree
 from shared.tok import Token, TokenType as T
 from shared.grammer import Symbol
 
@@ -12,8 +12,8 @@ from shared.grammer import Symbol
 
     Returns a parse tree on success, or None if the sequence of tokens doesn't follow the grammer.
 '''
-def parse(tokens : list[Token]) -> AST | None:
-    tree = AST(Symbol(N.STATEMENT_LIST))
+def parse(tokens: list[Token]) -> Tree | None:
+    tree = Tree(Symbol(N.STATEMENT_LIST))
     if _build_tree(tree, tokens, 0) == None:
         return None
     else:
@@ -23,7 +23,7 @@ def parse(tokens : list[Token]) -> AST | None:
     Recursive function for building a parse tree from a sequence of tokens.
     Returns None if not successful.
 '''
-def _build_tree(tree : AST, tokens : list[Token], t_idx : int):
+def _build_tree(tree: Tree, tokens: list[Token], t_idx: int):
     # Go through all of the rules, check only the ones with a matching nterm
     # TODO : Go through the rules with terminal symbols first, then the ones with non-terminals
     for rule in grammer:
@@ -56,12 +56,12 @@ def _build_tree(tree : AST, tokens : list[Token], t_idx : int):
             peek = _peek(tokens, t_idx, 0)
             # Add terminal symbol to tree if it matches the rule, increment t_idx
             if rule_sym_type in T and peek is not None and rule_sym_type == peek.type:
-                tree.nodes.append(AST(tokens[t_idx]))
+                tree.nodes.append(Tree(tokens[t_idx]))
                 t_idx += 1
 
             # Recursivly expand non-terminal symbols. Add the expanded node to the tree. Return None if expanding failed
             elif rule_sym_type in N:
-                nterm_node = AST(Symbol(rule_sym_type))
+                nterm_node = Tree(Symbol(rule_sym_type))
                 t_idx = _build_tree(nterm_node, tokens, t_idx)
                 if t_idx == None:
                     return None

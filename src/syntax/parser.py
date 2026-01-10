@@ -1,5 +1,5 @@
 from syntax.grammer import N, grammer
-from syntax.tree import Tree
+from shared.tree import Tree
 from shared.tok import Token, TokenType as T
 from shared.grammer import Symbol
 

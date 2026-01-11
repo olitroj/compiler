@@ -1,0 +1,13 @@
+// Example program to test the lexer from text file
+var x = 0;
+var max = 100;
+
+while (x < max) {
+    x++;
+    
+    if (x == 50) {
+        max = max + 10;
+    }
+}
+
+var result = x << 2;

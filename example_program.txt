@@ -2,12 +2,16 @@
 var x = 0;
 var max = 100;
 
-while (x < max) {
-    x++;
+while x < max {
+    x = x++;
     
-    if (x == 50) {
+    if x == 50 {
         max = max + 10;
-    }
-}
+    };
+
+    do
+        x++
+    while 5;
+};
 
 var result = x << 2;

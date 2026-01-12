@@ -74,7 +74,10 @@ def main():
     # Check if a file path was provided as command line argument
     if len(sys.argv) > 1:
         filepath = sys.argv[1]
-        tokenize_from_file(filepath)
+        toks = tokenize_from_file(filepath)
+        from syntax.parser import parse
+        tree = parse(toks)
+        print(tree)
     else:
         # Default: use example string
         print("No file specified. Using example source code.")

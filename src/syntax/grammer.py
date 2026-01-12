@@ -28,6 +28,7 @@ class N(SymbolType):
     NEXT_P3 = auto()
     NEXT_P4 = auto()
     NEXT_P5 = auto()
+    VALUE = auto()
     
     def __init__(self, val):
         super().__init__(val, False)
@@ -41,7 +42,7 @@ class N(SymbolType):
         - Production rule's first 2 symbols must be non-ambiguous
 '''
 grammer = [
-    # File
+    # Start
     GR(N.STATEMENT_LIST, [N.STATEMENT, N.STATEMENT_LIST_NEXT]),
     GR(N.STATEMENT_LIST_NEXT, [T.SEMICOLON, N.STATEMENT_LIST]),
     GR(N.STATEMENT_LIST_NEXT, [T.SEMICOLON]),
@@ -66,8 +67,12 @@ grammer = [
     GR(N.STATEMENT, [T.OPEN_CURLY, N.GROUP_LIST]),                                  # Group
     GR(N.GROUP_LIST, [N.STATEMENT, N.GROUP_LIST_NEXT]),
     GR(N.GROUP_LIST_NEXT, [T.SEMICOLON, T.CLOSE_CURLY]),
-    GR(N.GROUP_LIST_NEXT, [T.SEMICOLON, N.GROUP_LIST_NEXT]),
-     
+    GR(N.GROUP_LIST_NEXT, [T.SEMICOLON, N.GROUP_LIST]),
+
+    GR(N.STATEMENT, [T.ID, T.INCREMENT]),                                           # Implicit incrementing/decrementing
+    GR(N.STATEMENT, [T.ID, T.DECREMENT]),
+
+
     # Expressions (Precedence levels, and various operators at those levels)
     GR(N.EXPRESSION, [N.P1, N.NEXT_P0]),                                            # Precedence levels
     GR(N.P1, [N.P2, N.NEXT_P1]),
@@ -76,24 +81,23 @@ grammer = [
     GR(N.P4, [N.P5, N.NEXT_P4]),
     GR(N.P5, [N.P6, N.NEXT_P5]),
 
-    GR(N.P6, [T.ID, N.NEXT_P5]),                                                    # Unary operators
-    GR(N.P6, [T.LITERAL, N.NEXT_P5]),
-    GR(N.P6, [T.OPEN_BRACE, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
-    GR(N.P6, [T.MINUS, T.ID, N.NEXT_P5]),
-    GR(N.P6, [T.MINUS, T.LITERAL, N.NEXT_P5]),
-    GR(N.P6, [T.MINUS, T.OPEN_BRACE, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
-    GR(N.P6, [T.BIT_NOT, T.ID, N.NEXT_P5]),
-    GR(N.P6, [T.BIT_NOT, T.LITERAL, N.NEXT_P5]),
-    GR(N.P6, [T.BIT_NOT, T.OPEN_BRACE, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
-    GR(N.P6, [T.LOGIC_NOT, T.ID, N.NEXT_P5]),
-    GR(N.P6, [T.LOGIC_NOT, T.LITERAL, N.NEXT_P5]),
-    GR(N.P6, [T.LOGIC_NOT, T.OPEN_BRACE, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
-    GR(N.P6, [T.INCREMENT, T.ID, N.NEXT_P5]),
-    GR(N.P6, [T.INCREMENT, T.LITERAL, N.NEXT_P5]),
-    GR(N.P6, [T.INCREMENT, T.OPEN_BRACE, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
-    GR(N.P6, [T.DECREMENT, T.ID, N.NEXT_P5]),
-    GR(N.P6, [T.DECREMENT, T.LITERAL, N.NEXT_P5]),
-    GR(N.P6, [T.DECREMENT, T.OPEN_BRACE, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
+    GR(N.P6, [T.MINUS, N.VALUE]),   # Last precedence level contains prefixed unary ops
+    GR(N.P6, [T.BIT_NOT, N.VALUE]),
+    GR(N.P6, [T.LOGIC_NOT, N.VALUE]),
+    GR(N.P6, [N.VALUE]),
+
+    # Increment decrement with highest precedence TODO: Find a better way of doing this
+    GR(N.VALUE, [T.ID, T.INCREMENT, N.NEXT_P5]),
+    GR(N.VALUE, [T.LITERAL, T.INCREMENT, N.NEXT_P5]),
+    GR(N.VALUE, [T.OPEN_BRACE, T.INCREMENT, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
+    GR(N.VALUE, [T.ID, T.DECREMENT, N.NEXT_P5]),
+    GR(N.VALUE, [T.LITERAL, T.DECREMENT, N.NEXT_P5]),
+    GR(N.VALUE, [T.OPEN_BRACE, T.DECREMENT, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
+
+    GR(N.VALUE, [T.ID, N.NEXT_P5]),                                                 # Values (identifier, literal, or brackets)
+    GR(N.VALUE, [T.LITERAL, N.NEXT_P5]),
+    GR(N.VALUE, [T.OPEN_BRACE, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
+
 
     GR(N.NEXT_P0, [T.GREATER_THAN, N.EXPRESSION]),                                  # Operators at each precedence level
     GR(N.NEXT_P0, [T.GREATER_THAN_EQUALS, N.EXPRESSION]),

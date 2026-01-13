@@ -91,11 +91,11 @@ def main():
         if (x < y) {
             x = x + 1;
             y++;
-        }
+        };
         
         while (x <= y) {
             x = x << 1;
-        }
+        };
         
         // This is a comment
         var result = (x && y) || (x ^^ y);

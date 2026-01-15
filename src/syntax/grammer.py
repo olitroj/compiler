@@ -89,10 +89,8 @@ grammer = [
     # Increment decrement with highest precedence TODO: Find a better way of doing this
     GR(N.VALUE, [T.ID, T.INCREMENT, N.NEXT_P5]),
     GR(N.VALUE, [T.LITERAL, T.INCREMENT, N.NEXT_P5]),
-    GR(N.VALUE, [T.OPEN_BRACE, T.INCREMENT, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
     GR(N.VALUE, [T.ID, T.DECREMENT, N.NEXT_P5]),
     GR(N.VALUE, [T.LITERAL, T.DECREMENT, N.NEXT_P5]),
-    GR(N.VALUE, [T.OPEN_BRACE, T.DECREMENT, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
 
     GR(N.VALUE, [T.ID, N.NEXT_P5]),                                                 # Values (identifier, literal, or brackets)
     GR(N.VALUE, [T.LITERAL, N.NEXT_P5]),

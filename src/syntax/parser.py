@@ -66,12 +66,8 @@ def _build_tree(tree: Tree, tokens: list[Token], t_idx: int):
                 if t_idx == None:
                     return None
 
-                # These statements cut the tree if they are redundant
-                # If non-terminal has only one child, replace it with the child (removes redendant non-terminal)
-                if len(nterm_node.nodes) == 1 and nterm_node.symbol.type in N:
-                    tree.nodes.append(nterm_node.nodes[0])
                 # If node has no children (epsilon), remove it entirely (redundant)
-                elif len(nterm_node.nodes) != 0:
+                if len(nterm_node.nodes) != 0:
                     tree.nodes.append(nterm_node)
 
             else:

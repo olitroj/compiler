@@ -1,4 +1,6 @@
 from shared.lexer import Lexer, LexerError
+from syntax.parser import parse
+from semantics.semantics import check_semantics
 import sys
 
 def tokenize_from_file(filepath: str):
@@ -13,21 +15,21 @@ def tokenize_from_file(filepath: str):
         with open(filepath, 'r', encoding='utf-8') as file:
             source_code = file.read()
         
-        print(f"Reading from: {filepath}")
-        print(f"Source code length: {len(source_code)} characters\n")
-        print("=" * 60)
-        print(source_code)
-        print("=" * 60)
-        print()
+        # print(f"Reading from: {filepath}")
+        # print(f"Source code length: {len(source_code)} characters\n")
+        # print("=" * 60)
+        # print(source_code)
+        # print("=" * 60)
+        # print()
         
         # Create lexer and tokenize
         lexer = Lexer(source_code)
         tokens = lexer.tokenize()
         
         # Print the tokens
-        print(f"Successfully tokenized {len(tokens)} tokens:\n")
-        for i, token in enumerate(tokens, 1):
-            print(f"{i:3d}. {token}")
+        # print(f"Successfully tokenized {len(tokens)} tokens:\n")
+        # for i, token in enumerate(tokens, 1):
+        #     print(f"{i:3d}. {token}")
         
         return tokens
         
@@ -75,8 +77,9 @@ def main():
     if len(sys.argv) > 1:
         filepath = sys.argv[1]
         toks = tokenize_from_file(filepath)
-        from syntax.parser import parse
         tree = parse(toks)
+        print(tree)
+        print(check_semantics(tree))
         print(tree)
     else:
         # Default: use example string

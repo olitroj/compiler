@@ -16,15 +16,14 @@ class SymbolType(Enum):
     Tnherit this class to define new symbols in a grammer.
 '''
 class Symbol:
-    def __init__(self, type: SymbolType, value = None) -> None:
+    def __init__(self, type: SymbolType) -> None:
         self.type = type
-        self.value = value
 
     def __eq__(self, other: Symbol) -> bool:
-        return self.type == other.type and self.value == other.value
+        return self.type == other.type
     
     def __repr__(self) -> str:
-        return self.type.name if self.value is None else f"{self.type.name}({repr(self.value)})"
+        return self.type.name
 
 '''
     Class representing a production rule for a reguler or context-free grammer.

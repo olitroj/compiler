@@ -35,7 +35,7 @@ def _build_ast(node: Tree, precedence_offset: int):
     # Recognize unary minus, increase it's precedence from 5 to 6
     if node.symbol.type == N.P6 and node.nodes[0].symbol.type == TokenType.MINUS:
         node.nodes[0].symbol.precedence += 1
-    if isinstance(node.symbol, TokenType) and node.symbol.precedence is not None:
+    if isinstance(node.symbol, Token) and node.symbol.precedence is not None:
         node.symbol.precedence += precedence_offset
 
     children = node.nodes
@@ -46,7 +46,7 @@ def _build_ast(node: Tree, precedence_offset: int):
             continue
 
         # Find operator with lowest precedence within a nodes children
-        lowest_precedence = inf
+        lowest_precedence = 10000000000
         operator = None
         for gchild in grandchildren:
             if isinstance(gchild.symbol, Token) and gchild.symbol.precedence is not None:

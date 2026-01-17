@@ -1,17 +1,5 @@
 // Example program to test the lexer from text file
-var x = 0;
-var max = 100;
+var y = 1;
+var z = 2;
 
-while x < max {
-    x = x++;
-    
-    if x == 50 {
-        max = max + 10;
-    };
-
-    do
-        x++
-    while 5;
-};
-
-var result = x << 2;
+var x = 5 + (4 || y - -z) + 3 + -4 || 10;

@@ -1,4 +1,4 @@
-from syntax.grammer import N, grammer
+from syntax.grammer_def import N, grammer
 from shared.tree import Tree
 from shared.tok import Token, TokenType as T
 from shared.grammer import Symbol
@@ -66,8 +66,11 @@ def _build_tree(tree: Tree, tokens: list[Token], t_idx: int):
                 if t_idx == None:
                     return None
 
+                # If node has only one child, add that child instead of itself (redundant) (unless it's expression)
+                if len(nterm_node.nodes) == 1 and nterm_node.symbol.type != N.EXPRESSION:
+                    tree.nodes.append(nterm_node.nodes[0])
                 # If node has no children (epsilon), remove it entirely (redundant)
-                if len(nterm_node.nodes) != 0:
+                elif len(nterm_node.nodes) != 0:
                     tree.nodes.append(nterm_node)
 
             else:

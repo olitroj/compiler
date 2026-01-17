@@ -1,6 +1,6 @@
 from shared.lexer import Lexer, LexerError
 from syntax.parser import parse
-from semantics.semantics import check_semantics
+from semantics.sem import check_semantics
 import sys
 
 def tokenize_from_file(filepath: str):
@@ -78,7 +78,6 @@ def main():
         filepath = sys.argv[1]
         toks = tokenize_from_file(filepath)
         tree = parse(toks)
-        print(tree)
         print(check_semantics(tree))
         print(tree)
     else:

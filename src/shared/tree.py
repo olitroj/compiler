@@ -10,8 +10,8 @@ class Tree:
         self.symbol = symbol
         self.nodes = nodes if nodes is not None else []
 
-    def __eq__(self, other : Tree) -> bool:
-        return self.symbol == other.symbol and self.nodes == other.nodes
+    # def __eq__(self, other : Tree) -> bool:
+    #     return self.symbol == other.symbol and self.nodes == other.nodes
     
     def __repr__(self) -> str:
         if not self.nodes:

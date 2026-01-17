@@ -46,7 +46,7 @@ def _build_ast(node: Tree, precedence_offset: int):
             continue
 
         # Find operator with lowest precedence within a nodes children
-        lowest_precedence = 10000000000
+        lowest_precedence = inf
         operator = None
         for gchild in grandchildren:
             if isinstance(gchild.symbol, Token) and gchild.symbol.precedence is not None:

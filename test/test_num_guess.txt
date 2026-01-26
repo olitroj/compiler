@@ -1,0 +1,15 @@
+var ans = 77;
+var guess = 0;
+
+while (guess != ans) {
+
+    guess = input();
+    if (guess < ans) {
+        output(0);
+    } else if (guess > ans) {
+        output(2);
+    };
+
+};
+
+output(1);

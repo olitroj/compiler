@@ -129,6 +129,9 @@ Example programs are found in `test/`.
 
 - `Test Complex` tests a complex expression.
 
+- `Test Num Guess` is a simple number guessing game. If the input is too small, 0 is printed, and it waits for another input.
+  If the guess is too large, 2 is printed. If the guess matches the answer, 1 is printed and the game finished.
+
 ## Architecture
 
 - **Lexer** (`src/shared/lexer.py`) - Tokenizes source code

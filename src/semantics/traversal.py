@@ -16,6 +16,10 @@ from semantics.checks import _sem, _left_rotations, _build_ast
     Returns True/False when the node passes/fails the semantic checks.
 '''
 def _pre_order(node: Tree, declared_symbols: dict[Symbol], precedence_offset: int) -> bool:
+    # Handle None nodes (used for operator positions in AST)
+    if node is None:
+        return True
+    
     # Semantics check
     if not _sem(node, declared_symbols):
         return False
@@ -44,6 +48,10 @@ def _pre_order(node: Tree, declared_symbols: dict[Symbol], precedence_offset: in
 def _post_order(node: Tree, declared_symbols: dict[Symbol], precedence_offset: int):
     # Traverses children
     for child in node.nodes:
+        # Skip None nodes (used to represent operator positions in AST)
+        if child is None:
+            continue
+            
         result = _post_order(child, declared_symbols, precedence_offset)
         if result is None:
             return None

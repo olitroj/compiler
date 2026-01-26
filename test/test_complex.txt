@@ -2,4 +2,6 @@
 var y = 1;
 var z = 2;
 
-var x = 5 + (4 || y - -z) + 3 + -4 || 10;
+// Expected output: 15
+var x = 5 + (4 || y - -z) + 3 + -4 | 10;
+output(x);

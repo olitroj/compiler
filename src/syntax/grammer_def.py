@@ -92,6 +92,7 @@ grammer = [
     GR(N.VALUE, [T.ID, T.DECREMENT, N.NEXT_P5]),
     GR(N.VALUE, [T.LITERAL, T.DECREMENT, N.NEXT_P5]),
 
+    GR(N.VALUE, [T.ID, T.OPEN_BRACE, N.EXPRESSION_LIST, N.NEXT_P5]),                # Function call in expression
     GR(N.VALUE, [T.ID, N.NEXT_P5]),                                                 # Values (identifier, literal, or brackets)
     GR(N.VALUE, [T.LITERAL, N.NEXT_P5]),
     GR(N.VALUE, [T.OPEN_BRACE, N.EXPRESSION, T.CLOSE_BRACE, N.NEXT_P5]),
@@ -114,7 +115,7 @@ grammer = [
 
     GR(N.NEXT_P3, [T.BIT_AND, N.P3]),
     GR(N.NEXT_P3, [T.BIT_OR, N.P3]),
-    GR(N.NEXT_P3, [T.BIT_NOT, N.P3]),
+    GR(N.NEXT_P3, [T.BIT_XOR, N.P3]),                                                # Replaced the second BIT_NOT with BIT_XOR              
     GR(N.NEXT_P3, None),
 
     GR(N.NEXT_P4, [T.SHIFT_LEFT, N.P4]),

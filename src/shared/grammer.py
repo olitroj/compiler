@@ -22,6 +22,9 @@ class Symbol:
     def __eq__(self, other: Symbol) -> bool:
         return self.type == other.type
     
+    def __hash__(self):
+        return hash(self.type)
+    
     def __repr__(self) -> str:
         return self.type.name
 

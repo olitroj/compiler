@@ -8,6 +8,10 @@ from math import inf
     Checks [node] against all semantic rules. Returns True/False if success/fail.
 '''
 def _sem(node: Tree, declared_symbols: dict[Symbol]) -> bool:
+    # Handle None nodes (used for operator positions in AST)
+    if node is None:
+        return True
+    
     node_symbol = node.symbol
     children = node.nodes
 
@@ -19,11 +23,12 @@ def _sem(node: Tree, declared_symbols: dict[Symbol]) -> bool:
 
     if node_symbol.type == N.STATEMENT:
         # Check if identifier is being declared more than once
-        if children[0].symbol.type == TokenType.VAR and children[1].symbol in declared_symbols:
-            print("Identifier is already declared:", children[1].symbol)
-            return False
-        else:
-            declared_symbols[children[1].symbol] = True
+        if children and children[0].symbol.type == TokenType.VAR:
+            if len(children) > 1 and children[1].symbol in declared_symbols:
+                print("Identifier is already declared:", children[1].symbol)
+                return False
+            elif len(children) > 1:
+                declared_symbols[children[1].symbol] = True
     return True
 
 '''

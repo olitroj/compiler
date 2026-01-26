@@ -1,7 +1,14 @@
 from shared.lexer import Lexer, LexerError
 from syntax.parser import parse
 from semantics.sem import check_semantics
+from shared.code_generator import generate_code
 import sys
+import argparse
+import os
+
+# Increase recursion limit for parsing larger programs
+# Default is 1000, which is insufficient for programs with many statements
+sys.setrecursionlimit(5000)
 
 def tokenize_from_file(filepath: str):
     """
@@ -15,21 +22,9 @@ def tokenize_from_file(filepath: str):
         with open(filepath, 'r', encoding='utf-8') as file:
             source_code = file.read()
         
-        # print(f"Reading from: {filepath}")
-        # print(f"Source code length: {len(source_code)} characters\n")
-        # print("=" * 60)
-        # print(source_code)
-        # print("=" * 60)
-        # print()
-        
         # Create lexer and tokenize
         lexer = Lexer(source_code)
         tokens = lexer.tokenize()
-        
-        # Print the tokens
-        # print(f"Successfully tokenized {len(tokens)} tokens:\n")
-        # for i, token in enumerate(tokens, 1):
-        #     print(f"{i:3d}. {token}")
         
         return tokens
         
@@ -73,43 +68,61 @@ def tokenize_from_string(source_code: str):
         return None
 
 def main():
-    # Check if a file path was provided as command line argument
-    if len(sys.argv) > 1:
-        filepath = sys.argv[1]
-        toks = tokenize_from_file(filepath)
-        tree = parse(toks)
-        print(check_semantics(tree))
-        print(tree)
-    else:
-        # Default: use example string
-        print("No file specified. Using example source code.")
-        print("Usage: python main.py <source_file>")
-        print()
-        
-        source_code = """
-        var x = 10;
-        var y = 20;
-        
-        if (x < y) {
-            x = x + 1;
-            y++;
-        };
-        
-        while (x <= y) {
-            x = x << 1;
-        };
-        
-        // This is a comment
-        var result = (x && y) || (x ^^ y);
-        
-        /* Multi-line
-           comment test */
-        do {
-            x--;
-        } while (x != 0);
+    # Set up argument parser
+    parser = argparse.ArgumentParser(
+        description='Compile custom language to 6502 assembly',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python src/main.py                                # Run default test/test_basic.txt with py65mon target
+  python src/main.py program.txt                    # Compile with generic target
+  python src/main.py program.txt --target py65mon   # Compile for py65mon and auto-assemble
         """
-        
-        tokenize_from_string(source_code)
+    )
+    parser.add_argument('file', nargs='?', help='Source code file to compile (default: test/test_basic.txt)')
+    parser.add_argument('--target', choices=['py65mon'], 
+                       help='Target emulator (default: generic, auto-assembles with DASM if py65mon)')
+    
+    args = parser.parse_args()
+    
+    # Check if a file path was provided
+    if args.file:
+        filepath = args.file
+    else:
+        filepath = os.path.join(os.path.dirname(__file__), 'test', 'test_basic.txt')
+        print(f"Using default test file: {filepath}")
 
+    toks = tokenize_from_file(filepath)
+    
+    if toks is None:
+        return
+    
+    # Parse the tokens into an AST
+    tree = parse(toks)
+    
+    # Check semantics
+    semantics_valid = check_semantics(tree)
+    print(f"Semantic analysis: {semantics_valid}")
+    
+    if not semantics_valid:
+        print("Error: Semantic analysis failed!")
+        return
+    
+    # Generate assembly code with target emulator
+    target = args.target if args.target else 'generic'
+    print(f"\nGenerating 6502 assembly code (target: {target})...")
+    asm_code = generate_code(tree, target=target)
+    
+    # Write assembly to output file
+    output_file = filepath.rsplit('.', 1)[0] + '.asm'
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(asm_code)
+    
+    print(f"Assembly code written to: {output_file}")
+    print("\n" + "="*60)
+    print(asm_code)
+    print("="*60)
+        
+        
 if __name__ == "__main__":
     main()

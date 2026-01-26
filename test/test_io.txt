@@ -1,0 +1,3 @@
+// IO test program
+var x = input();
+output(x);

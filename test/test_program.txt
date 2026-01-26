@@ -1,0 +1,72 @@
+// Comprehensive test program
+var x = 10;
+var y = 5;
+var result = 0;
+
+// Test arithmetic
+result = x + y;
+output(result);
+
+// Test comparison and if/else
+if (x > y) {
+    result = 1;
+} else {
+    result = 0;
+};
+output(result);
+
+// Test while loop
+var counter = 0;
+while (counter < 5) {
+    counter++;
+    output(counter);
+};
+
+// Test do-while loop
+do {
+    x--;
+    output(x);
+} while (x > 0);
+
+// Test bitwise operations
+var a = 15;
+var b = 7;
+
+result = a & b;
+output(result);
+
+result = a | b;
+output(result);
+
+result = a ^ b;
+output(result);
+
+// Test logical operations
+var test1 = 1;
+var test2 = 0;
+result = test1 && test2;
+output(result);
+
+result = test1 || test2;
+output(result);
+
+result = test1 ^^ test2;
+output(result);
+
+// Test shift operations
+result = a << 2;
+output(result);
+
+result = b >> 1;
+output(result);
+
+// Test unary operators
+x = 12;
+result = -x;
+output(result);
+
+result = ~a;
+output(result);
+
+// Final output
+//output(result);

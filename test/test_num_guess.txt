@@ -1,6 +1,14 @@
+// Hard coded answer
 var ans = 77;
 var guess = 0;
 
+
+/**
+ * Loop to keep querying the user for input until it matches the answer.
+ * If the input is smaller, 0 is printed. 
+ * If the input is larger, 2 is printed.
+ * If the player correctly guesses, the loop is broken and 1 is printed.
+ */
 while (guess != ans) {
 
     guess = input();

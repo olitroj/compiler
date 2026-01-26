@@ -89,7 +89,7 @@ Examples:
     if args.file:
         filepath = args.file
     else:
-        filepath = os.path.join(os.path.dirname(__file__), 'test', 'test_basic.txt')
+        filepath = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'test', 'test_basic.txt'))
         print(f"Using default test file: {filepath}")
 
     toks = tokenize_from_file(filepath)
